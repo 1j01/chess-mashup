@@ -275,7 +275,9 @@ addEventListener('mousedown', function (e) {
 			scene.add(decal);
 			// also show the path of the move, in 3D
 			const points = move.keyframes.map(
-				({ gamePosition }) => gameToWorldSpace(gamePosition)
+				({ gamePosition, towardsGroundVector }) =>
+					gameToWorldSpace(gamePosition)
+						//.add(towardsGroundVector.clone().multiplyScalar(squareSize / 2.91))
 			);
 			console.log(move.keyframes, points);
 			if (points.length < 3) {
