@@ -659,6 +659,7 @@ function getMoves(piece) {
 		let towardsGroundVector = piece.towardsGroundVector.clone();
 		let quaternion = piece.targetOrientation.clone();
 		let keyframes = []; // for animating the piece's movement
+		let distance = 0;
 		keyframes.push({
 			gamePosition: pos.clone(),
 			towardsGroundVector: towardsGroundVector.clone()
@@ -725,6 +726,8 @@ function getMoves(piece) {
 					// 	new THREE.Euler(0, 0, -Math.PI / 2)
 					// ));
 				}
+
+				distance += 1;
 			}
 
 			const pieceAtPos = pieceAtGamePosition(pos);
@@ -743,6 +746,7 @@ function getMoves(piece) {
 				towardsGroundVector,
 				direction,
 				capturingPiece: pieceAtPos,
+				distance,
 			});
 			if (pieceAtPos) {
 				break;
@@ -763,6 +767,7 @@ function getMoves(piece) {
 			}
 		}
 	}
+	moves.sort((a, b) => a.distance - b.distance);
 	return moves;
 }
 
