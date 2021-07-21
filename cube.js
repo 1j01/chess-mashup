@@ -678,7 +678,7 @@ function getMoves(piece) {
 
 				// try to keep piece facing and heading in the same direction when wrapping around the board...
 
-				const forward = new THREE.Vector3(subStep[0], subStep[1], 1).applyQuaternion(quaternion);
+				const forward = new THREE.Vector3(subStep[0], 0, subStep[1]).applyQuaternion(quaternion);
 				pos.add(forward);
 
 				const diagonalMovement = Math.abs(direction[0]) === 1 && Math.abs(direction[1]) === 1;
