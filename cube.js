@@ -711,10 +711,19 @@ function getMoves(piece) {
 					// move down off the edge of the board cube
 					pos.add(towardsGroundVector);
 					towardsGroundVector = getTowardsGroundVector(pos);
-					quaternion.setFromUnitVectors(
+					// quaternion.setFromUnitVectors(
+					// 	new THREE.Vector3(0, -1, 0),
+					// 	towardsGroundVector.clone(),
+					// );
+					// TODO: premultiply vs multiply?
+					// I guess this needs to be different per (subStep) direction...
+					quaternion.multiply(new THREE.Quaternion().setFromUnitVectors(
 						new THREE.Vector3(0, -1, 0),
-						towardsGroundVector.clone(),
-					);
+						new THREE.Vector3(-subStep[0], 0, -subStep[1]),
+					));
+					// quaternion.multiply(new THREE.Quaternion().setFromEuler(
+					// 	new THREE.Euler(0, 0, -Math.PI / 2)
+					// ));
 				}
 			}
 
