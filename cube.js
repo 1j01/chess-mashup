@@ -303,6 +303,7 @@ addEventListener('mousedown', function (e) {
 	} else if (selectedPiece) {
 		if (hoveredSpace) {
 			const moves = getMoves(selectedPiece);
+			console.log("Moves:", moves);
 			const move = moves.find(move => move.gamePosition.equals(hoveredSpace) && move.valid);
 			if (move) {
 				selectedPiece.makeMove(move, takeTurn);
@@ -680,7 +681,9 @@ function getMoves(piece) {
 
 				const forward = new THREE.Vector3(subStep[0], 0, subStep[1]).applyQuaternion(quaternion);
 				pos.add(forward);
-
+				// applyQuaternion() gives imprecise results, and breaks move equality checking when clicking to make a move especially with the Rook, if we don't round this.
+				pos.round();
+				
 				const diagonalMovement = Math.abs(direction[0]) === 1 && Math.abs(direction[1]) === 1;
 				if (!diagonalMovement) {
 					keyframes.push({
@@ -708,6 +711,10 @@ function getMoves(piece) {
 					// move down off the edge of the board cube
 					pos.add(towardsGroundVector);
 					towardsGroundVector = getTowardsGroundVector(pos);
+					quaternion.setFromUnitVectors(
+						new THREE.Vector3(0, -1, 0),
+						towardsGroundVector.clone(),
+					);
 				}
 			}
 
