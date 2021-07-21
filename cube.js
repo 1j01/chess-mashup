@@ -279,7 +279,7 @@ addEventListener('mousedown', function (e) {
 					gameToWorldSpace(gamePosition)
 						//.add(towardsGroundVector.clone().multiplyScalar(squareSize / 2.91))
 			);
-			console.log(move.keyframes, points);
+			// console.log(move.keyframes, points);
 			if (points.length < 3) {
 				points.push(points[0].clone().add(new THREE.Vector3(0, 0, 0.1)));
 			}
