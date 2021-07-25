@@ -396,6 +396,12 @@ function deserialize(json) {
 
 	moveInProgress = false;
 }
+function serializeMove(move) {
+	return JSON.stringify({
+		pieceId: move.piece.id,
+		
+	});
+}
 
 function clearMovementDecals() {
 	for (const decal of movementDecals) {
