@@ -317,11 +317,11 @@ let spaceHoverDecals = [];
 
 const mouse = { x: null, y: null };
 
-let undos = [];
-let redos = [];
+let gameHistory = [];
+let gameHistoryIndex = 0;
 
 function undo(secondTime) {
-	if (undos.length === 0) {
+	if (gameHistoryIndex === 0) {
 		return;
 	}
 	const state = undos.pop();
@@ -626,8 +626,9 @@ class Piece {
 		if (moveInProgress) {
 			return;
 		}
-		undos.push(serialize());
-		redos.length = 0;
+		gameHistory.push({move: serializeMove(move)});
+		// undos.push(serialize());
+		// redos.length = 0;
 
 		moveInProgress = true;
 
