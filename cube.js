@@ -1037,7 +1037,7 @@ function pieceAtGamePosition(gamePosition) {
 function getMoves(piece, getPieceAtGamePosition = pieceAtGamePosition, checkingCheck = false) {
 	const moves = [];
 	const canGoManySpaces = ["queen", "rook", "bishop"].indexOf(piece.pieceType) !== -1;
-	const movementDirections = [];
+	let movementDirections = [];
 	if (piece.pieceType === "king" || piece.pieceType === "queen" || piece.pieceType === "rook") {
 		// horizontal and vertical movement
 		movementDirections.push([1, 0], [-1, 0], [0, 1], [0, -1]);
@@ -1061,6 +1061,21 @@ function getMoves(piece, getPieceAtGamePosition = pieceAtGamePosition, checkingC
 			movementDirections.push([1, 0], [-1, 0], [0, 1], /*[0, -1],*/[1, 1], /*[1, -1],*/[-1, 1], /*[-1, -1]*/);
 		}
 	}
+
+	// On a plane, `left, up` is equivalent to `up, left` but not so in a 3D voxel world.
+	// With 3D rotations, order matters, like with a Rubik's cube.
+	// Consider the case where a pawn wants to attack a piece to its diagonal, and there's a voxel crater adjacent to them.
+	// `left, up` may attack the piece whereas `up, left` may go down into the crater, and not come out.
+	// Deranged (order-swapped) diagonal moves are needed.
+	const deranged = [];
+	for (const direction of movementDirections) {
+		deranged.push([direction[1], direction[0]]);
+	}
+	movementDirections.push(...deranged);
+	movementDirections = movementDirections.filter((value, index, array) =>
+		movementDirections.findIndex((otherValue) => value.toString() == otherValue.toString()) === index
+	);
+
 	for (const direction of movementDirections) {
 		// a pawn can move two spaces if it is the first move the pawn makes
 		// (don't do this as movementDirections.push([2, 0]) above because it needs collision detection)
