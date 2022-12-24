@@ -1163,8 +1163,12 @@ function getMoves(piece, getPieceAtGamePosition = pieceAtGamePosition, checkingC
 		// Note: this forward direction must correspond to distanceForward!
 		// movementDirections.push([1, 0], [1, 1], [1, -1]);
 		movementDirections.push([0, -1], [1, -1], [-1, -1]);
-		// on home cube face, move in any cardinal direction, and attack in any diagonal direction
-		if (piece.gamePosition.z === piece.startingGamePosition.z) {
+		if (
+			// on home cube face, move in any cardinal direction, and attack in any diagonal direction
+			(location.hash.match(/chess-on-a-cube/) && piece.gamePosition.z === piece.startingGamePosition.z) ||
+			// anywhere in voxel chess, since there's no clear definition of a home cube face
+			location.hash.match(/voxel-chess/)
+		) {
 			// movementDirections.push(/*[1, 0],*/[-1, 0], [0, 1], [0, -1], /*[1, 1], [1, -1],*/[-1, 1], [-1, -1]);
 			movementDirections.push([1, 0], [-1, 0], [0, 1], /*[0, -1],*/[1, 1], /*[1, -1],*/[-1, 1], /*[-1, -1]*/);
 		}
@@ -1321,21 +1325,23 @@ function getMoves(piece, getPieceAtGamePosition = pieceAtGamePosition, checkingC
 			// but I haven't managed to get it working where it
 			// doesn't break the movement path, causing rooks for example to go in a winding path.
 			// I'm storing and resetting the quaternion in order to avoid it affecting the path.
-			const movement = new THREE.Vector3().subVectors(pos, lastPos);
 			const resetQuaternion = quaternion.clone();
-			if (movement.length() === 1) {
-				const matrix = new THREE.Matrix4().lookAt(
-					lastPos,
-					pos,
-					towardsGroundVector.clone().negate()
-				);
-				quaternion.setFromRotationMatrix(matrix);
-			} else if (movement.length() != 0) {
-				console.log("unexpected (but likely in the future)", movement, movement.length());
-			} else {
-				// TODO: use subStep3D instead of relying on lastPos-pos not being 0
-				// and do this earlier in the animation,
-				// in order to handle the case of a piece rotating onto a wall, occupying the same cell.
+			if (!location.hash.match(/almost-chess/)) {
+				const movement = new THREE.Vector3().subVectors(pos, lastPos);
+				if (movement.length() === 1) {
+					const matrix = new THREE.Matrix4().lookAt(
+						lastPos,
+						pos,
+						towardsGroundVector.clone().negate()
+					);
+					quaternion.setFromRotationMatrix(matrix);
+				} else if (movement.length() != 0) {
+					console.log("unexpected (but likely in the future)", movement, movement.length());
+				} else {
+					// TODO: use subStep3D instead of relying on lastPos-pos not being 0
+					// and do this earlier in the animation,
+					// in order to handle the case of a piece rotating onto a wall, occupying the same cell.
+				}
 			}
 
 			const pieceAtPos = getPieceAtGamePosition(pos);
