@@ -4,7 +4,18 @@ if (!Detector.webgl) Detector.addGetWebGLMessage();
 const turnIndicator = document.getElementById("turn-indicator");
 
 // TODO:
+// - pawns can choose weird heading by attacking
+// - pawns can choose weird heading by starting next to a ledge
+// - how do pawns and how should pawns handle promotion? wrt the home face.
+// - the ai seems to be not committing to promoting a specific pawn so much anymore... or at least, not a specific direction? maybe the quaternion is rotating which direction it needs to go to promote every time? but, I seem to be able to promote going in a straight line... but I'm always trying to head off of my home face because that's what you're supposed to need to do, but maybe you can also promote by going in circles on your home face now?
+// - can't easily click behind a piece you select to move it forward (away from the camera)
+// - clicking on a piece to attack it
+//   - can't currently if piece doesn't actually rest on the face you can reach
+//   - ask for disambiguation if there are multiple reachable orientations that would capture the piece
+// - can't see check
+// - game over state unclear, often I'm confused why I can't move, when it's in stalemate
 // - menus
+//   - handle small screen (scrolling games list)
 //   - preview game type with a screenshot
 //   - game over
 //   - win/lose tracking system
