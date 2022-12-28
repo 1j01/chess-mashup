@@ -1121,7 +1121,7 @@ function initRendering() {
 
 	// renderer
 
-	renderer = new THREE.WebGLRenderer({
+	renderer = new CSS3DRenderer({
 		antialias: (theme === "wireframe" || theme === "perf") ? false : true
 	});
 	// renderer.setClearColor(scene.fog.color, 1);
@@ -1155,8 +1155,8 @@ function initRendering() {
 	// this texture can look really bad without anisotropic filtering
 	// at an angle or from far away,
 	// due to the black border around the white ornamentation
-	const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
-	hoverDecalTexture.anisotropy = maxAnisotropy;
+	// const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
+	// hoverDecalTexture.anisotropy = maxAnisotropy;
 
 }
 
@@ -1768,7 +1768,7 @@ function loadFromURL() {
 	backToMainEl.style.display = (screen === "new-game-options") ? "" : "none";
 	voxelChessOptions.style.display = (screen === "new-game-options" && game === "voxel-chess") ? "" : "none";
 	leaveGameEl.style.display = (screen === game) ? "" : "none";
-	gameOverDialog.close();
+	gameOverDialog.close?.();
 	newGameOptionsEl.dataset.game = game;
 	if (screen === game) {
 		Math.seedrandom(seedInput.value || undefined);
