@@ -58,11 +58,13 @@ const raycastTargets = []; // don't want to include certain objects like hoverDe
 
 let theme = "default";
 let enableShadows = true;
+let enableAmbientOcclusion = true;
 let keyframeDebug = false;
 let facingDebug = false;
 try {
 	theme = localStorage.getItem("3d-theme");
 	enableShadows = localStorage.getItem("3d-shadows") === "true";
+	enableAmbientOcclusion = localStorage.getItem("3d-ambient-occlusion") !== "false";
 	keyframeDebug = localStorage.getItem("3d-debug-keyframes") === "true";
 	facingDebug = localStorage.getItem("3d-debug-facing") === "true";
 } catch (error) {
@@ -1141,7 +1143,7 @@ function initRendering() {
 
 	ssaoPass?.dispose();
 	ssaoPass = null;
-	if (renderer === webGLRenderer && theme !== "perf" && theme !== "wireframe") {
+	if (renderer === webGLRenderer && enableAmbientOcclusion && theme !== "perf" && theme !== "wireframe") {
 		ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
 		ssaoPass.kernelRadius = 12;
 		ssaoPass.minDistance = 0.0005;
@@ -1972,6 +1974,7 @@ const visualThemeSelect = document.getElementById("visual-theme-select");
 const audioThemeSelect = document.getElementById("audio-theme-select");
 const musicCheckbox = document.getElementById("music-checkbox");
 const enableShadowsCheckbox = document.getElementById("enable-shadows-checkbox");
+const enableAmbientOcclusionCheckbox = document.getElementById("enable-ambient-occlusion-checkbox");
 const gameOverDialog = document.getElementById("game-over-dialog");
 const returnToMenuButton = document.getElementById("return-to-menu");
 const reviewGameButton = document.getElementById("review-game");
@@ -1999,6 +2002,17 @@ enableShadowsCheckbox.addEventListener("change", () => {
 	initRendering();
 	try {
 		localStorage.setItem("3d-shadows", enableShadowsCheckbox.checked);
+	} catch (error) {
+		alert("Couldn't save preference.\n\n" + error);
+	}
+});
+
+enableAmbientOcclusionCheckbox.checked = enableAmbientOcclusion;
+enableAmbientOcclusionCheckbox.addEventListener("change", () => {
+	enableAmbientOcclusion = enableAmbientOcclusionCheckbox.checked;
+	initRendering();
+	try {
+		localStorage.setItem("3d-ambient-occlusion", enableAmbientOcclusionCheckbox.checked);
 	} catch (error) {
 		alert("Couldn't save preference.\n\n" + error);
 	}
