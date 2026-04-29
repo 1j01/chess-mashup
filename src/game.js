@@ -1142,18 +1142,18 @@ function initRendering() {
 	saoPass?.dispose();
 	saoPass = null;
 	if (renderer === webGLRenderer && theme !== "perf" && theme !== "wireframe") {
-		saoPass = new SAOPass(scene, camera, false, true, new THREE.Vector2(window.innerWidth, window.innerHeight));
+		saoPass = new SAOPass(scene, camera, true, true, new THREE.Vector2(window.innerWidth, window.innerHeight));
 		saoPass.params.output = SAOPass.OUTPUT.Default;
-		saoPass.params.saoBias = 0.5;
-		saoPass.params.saoIntensity = 0.02;
-		saoPass.params.saoScale = 1;
-		saoPass.params.saoKernelRadius = 40;
+		saoPass.params.saoBias = 0.2;
+		saoPass.params.saoIntensity = 0.004;
+		saoPass.params.saoScale = 2;
+		saoPass.params.saoKernelRadius = 16;
 		saoPass.params.saoMinResolution = 0;
 		saoPass.params.saoBlur = true;
-		saoPass.params.saoBlurRadius = 8;
-		saoPass.params.saoBlurStdDev = 4;
-		saoPass.params.saoBlurDepthCutoff = 0.01;
-		saoPass.renderToScreen = true;
+		saoPass.params.saoBlurRadius = 4;
+		saoPass.params.saoBlurStdDev = 2;
+		saoPass.params.saoBlurDepthCutoff = 0.005;
+		saoPass.renderToScreen = false;
 	}
 
 	// Lighting
@@ -1502,7 +1502,8 @@ function animate() {
 	document.body.style.cursor = pointerCursor ? 'pointer' : 'default';
 
 	if (renderer === webGLRenderer && saoPass) {
-		saoPass.render(renderer, null, saoPass.beautyRenderTarget);
+		renderer.render(scene, camera);
+		saoPass.render(renderer, null, null);
 	} else {
 		renderer.render(scene, camera);
 	}
