@@ -1,11 +1,11 @@
 
 import * as THREE from 'three';
 
-import Stats from './lib/stats.module.js';
-import { SVGRenderer, SVGObject } from './lib/renderers/SVGRenderer.js';
-import { STLLoader } from './lib/STLLoader.js';
-import { CubeControls } from './lib/cube-controls.js';
-import { getBufferGeometryUtils } from './lib/BufferGeometryUtils.js';
+import Stats from '../lib/stats.module.js';
+import { SVGRenderer, SVGObject } from '../lib/renderers/SVGRenderer.js';
+import { STLLoader } from '../lib/STLLoader.js';
+import { CubeControls } from '../lib/cube-controls.js';
+import { getBufferGeometryUtils } from '../lib/BufferGeometryUtils.js';
 
 import { playSound } from './game-audio.js';
 
