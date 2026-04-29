@@ -25,6 +25,7 @@
 		"Renderable",
 		"seedrandom",
 		"slerp",
+		"ssao",
 		"undestroy",
 		"undoable",
 		"undos",

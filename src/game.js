@@ -6,6 +6,7 @@ import { SVGRenderer, SVGObject } from '../lib/renderers/SVGRenderer.js';
 import { STLLoader } from '../lib/STLLoader.js';
 import { CubeControls } from '../lib/cube-controls.js';
 import { getBufferGeometryUtils } from '../lib/BufferGeometryUtils.js';
+import { SSAOPass } from '../lib/postprocessing/SSAOPass.js';
 
 import { playSound } from './game-audio.js';
 
@@ -49,7 +50,8 @@ const turnIndicator = document.getElementById("turn-indicator");
 let stats,
 	camera, controls,
 	scene, renderer, webGLRenderer, svgRenderer,
-	ambientLight, spotLight;
+	ambientLight, spotLight,
+	ssaoPass;
 let webGLContextLost = false;
 const rendererContainer = document.getElementById("renderer-container");
 const raycastTargets = []; // don't want to include certain objects like hoverDecal, so we can't just use scene.children
@@ -1135,6 +1137,19 @@ function initRendering() {
 		controls.maxDistance = squareSize * BOARD_SIZE * 3;
 	}
 
+	// Postprocessing
+
+	ssaoPass?.dispose();
+	ssaoPass = null;
+	if (renderer === webGLRenderer && theme !== "perf" && theme !== "wireframe") {
+		ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
+		ssaoPass.kernelRadius = 12;
+		ssaoPass.minDistance = 0.0005;
+		ssaoPass.maxDistance = 0.02;
+		ssaoPass.output = SSAOPass.OUTPUT.Default;
+		ssaoPass.renderToScreen = true;
+	}
+
 	// Lighting
 	// Note: the environment map (envMap) also provides light.
 
@@ -1379,6 +1394,7 @@ function onWindowResize() {
 	camera.updateProjectionMatrix();
 	svgRenderer.setSize(window.innerWidth, window.innerHeight);
 	webGLRenderer?.setSize(window.innerWidth, window.innerHeight);
+	ssaoPass?.setSize(window.innerWidth, window.innerHeight);
 	controls.handleResize();
 }
 
@@ -1479,7 +1495,11 @@ function animate() {
 	}
 	document.body.style.cursor = pointerCursor ? 'pointer' : 'default';
 
-	renderer.render(scene, camera);
+	if (renderer === webGLRenderer && ssaoPass) {
+		ssaoPass.render(renderer, null, null);
+	} else {
+		renderer.render(scene, camera);
+	}
 }
 
 function cubeAtGamePosition(gamePosition) {
