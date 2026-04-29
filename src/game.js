@@ -1027,6 +1027,20 @@ function initWorld(game, worldSize) {
 			piece.deserialize(piece.serialize());
 		}
 	}
+
+	// Center camera on board
+	const terrainBounds = new THREE.Box3().setFromObject(terrainObject3D);
+	if (terrainBounds.isEmpty()) {
+		console.warn("Empty terrain bounds, can't center camera");
+	} else {
+		const boardCenterInWorldSpace = new THREE.Vector3();
+		terrainBounds.getCenter(boardCenterInWorldSpace);
+		const targetDelta = boardCenterInWorldSpace.clone().sub(controls.target);
+		controls.target.copy(boardCenterInWorldSpace);
+		camera.position.add(targetDelta); // relative; works in conjunction with controls.reset(); absolute might be clearer
+		camera.lookAt(controls.target);
+	}
+
 }
 
 function initRendering() {
