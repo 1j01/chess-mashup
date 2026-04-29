@@ -4,8 +4,18 @@ const path = require('node:path');
 const rootDir = __dirname;
 
 function packageRoot(packageName) {
-	const packageJsonPath = require.resolve(`${packageName}/package.json`);
-	return path.dirname(packageJsonPath);
+	const resolvedEntry = require.resolve(packageName);
+	let currentDir = path.dirname(resolvedEntry);
+
+	while (currentDir !== path.dirname(currentDir)) {
+		const packageJsonPath = path.join(currentDir, 'package.json');
+		if (fs.existsSync(packageJsonPath)) {
+			return currentDir;
+		}
+		currentDir = path.dirname(currentDir);
+	}
+
+	throw new Error(`Could not find package root for ${packageName}`);
 }
 
 const roots = {
