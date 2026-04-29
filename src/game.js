@@ -6,7 +6,7 @@ import { SVGRenderer, SVGObject } from '../lib/renderers/SVGRenderer.js';
 import { STLLoader } from '../lib/STLLoader.js';
 import { CubeControls } from '../lib/cube-controls.js';
 import { getBufferGeometryUtils } from '../lib/BufferGeometryUtils.js';
-import { SSAOPass } from '../lib/postprocessing/SSAOPass.js';
+import { SAOPass } from '../lib/postprocessing/SAOPass.js';
 
 import { playSound } from './game-audio.js';
 
@@ -51,7 +51,7 @@ let stats,
 	camera, controls,
 	scene, renderer, webGLRenderer, svgRenderer,
 	ambientLight, spotLight,
-	ssaoPass;
+	saoPass;
 let webGLContextLost = false;
 const rendererContainer = document.getElementById("renderer-container");
 const raycastTargets = []; // don't want to include certain objects like hoverDecal, so we can't just use scene.children
@@ -1139,15 +1139,21 @@ function initRendering() {
 
 	// Postprocessing
 
-	ssaoPass?.dispose();
-	ssaoPass = null;
+	saoPass?.dispose();
+	saoPass = null;
 	if (renderer === webGLRenderer && theme !== "perf" && theme !== "wireframe") {
-		ssaoPass = new SSAOPass(scene, camera, window.innerWidth, window.innerHeight);
-		ssaoPass.kernelRadius = 12;
-		ssaoPass.minDistance = 0.0005;
-		ssaoPass.maxDistance = 0.02;
-		ssaoPass.output = SSAOPass.OUTPUT.Default;
-		ssaoPass.renderToScreen = true;
+		saoPass = new SAOPass(scene, camera, false, true, new THREE.Vector2(window.innerWidth, window.innerHeight));
+		saoPass.params.output = SAOPass.OUTPUT.Default;
+		saoPass.params.saoBias = 0.5;
+		saoPass.params.saoIntensity = 0.02;
+		saoPass.params.saoScale = 1;
+		saoPass.params.saoKernelRadius = 40;
+		saoPass.params.saoMinResolution = 0;
+		saoPass.params.saoBlur = true;
+		saoPass.params.saoBlurRadius = 8;
+		saoPass.params.saoBlurStdDev = 4;
+		saoPass.params.saoBlurDepthCutoff = 0.01;
+		saoPass.renderToScreen = true;
 	}
 
 	// Lighting
@@ -1394,7 +1400,7 @@ function onWindowResize() {
 	camera.updateProjectionMatrix();
 	svgRenderer.setSize(window.innerWidth, window.innerHeight);
 	webGLRenderer?.setSize(window.innerWidth, window.innerHeight);
-	ssaoPass?.setSize(window.innerWidth, window.innerHeight);
+	saoPass?.setSize(window.innerWidth, window.innerHeight);
 	controls.handleResize();
 }
 
@@ -1495,8 +1501,8 @@ function animate() {
 	}
 	document.body.style.cursor = pointerCursor ? 'pointer' : 'default';
 
-	if (renderer === webGLRenderer && ssaoPass) {
-		ssaoPass.render(renderer, null, null);
+	if (renderer === webGLRenderer && saoPass) {
+		saoPass.render(renderer, null, saoPass.beautyRenderTarget);
 	} else {
 		renderer.render(scene, camera);
 	}
