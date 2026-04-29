@@ -1128,7 +1128,7 @@ function initRendering() {
 	if (!camera) {
 		camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
 		camera.position.z = -500;
-		camera.near = 0.1;
+		camera.near = 1;
 		camera.far = 1000;
 
 		controls = new CubeControls(camera, rendererContainer); // using a container so we don't need to recreate this object
@@ -1142,17 +1142,17 @@ function initRendering() {
 	saoPass?.dispose();
 	saoPass = null;
 	if (renderer === webGLRenderer && theme !== "perf" && theme !== "wireframe") {
-		saoPass = new SAOPass(scene, camera, true, true, new THREE.Vector2(window.innerWidth, window.innerHeight));
+		saoPass = new SAOPass(scene, camera, false, true, new THREE.Vector2(window.innerWidth, window.innerHeight));
 		saoPass.params.output = SAOPass.OUTPUT.Default;
-		saoPass.params.saoBias = 0.2;
-		saoPass.params.saoIntensity = 0.004;
-		saoPass.params.saoScale = 2;
-		saoPass.params.saoKernelRadius = 16;
-		saoPass.params.saoMinResolution = 0;
+		saoPass.params.saoBias = 0.35;
+		saoPass.params.saoIntensity = 0.002;
+		saoPass.params.saoScale = 1;
+		saoPass.params.saoKernelRadius = 8;
+		saoPass.params.saoMinResolution = 0.001;
 		saoPass.params.saoBlur = true;
-		saoPass.params.saoBlurRadius = 4;
-		saoPass.params.saoBlurStdDev = 2;
-		saoPass.params.saoBlurDepthCutoff = 0.005;
+		saoPass.params.saoBlurRadius = 3;
+		saoPass.params.saoBlurStdDev = 1.5;
+		saoPass.params.saoBlurDepthCutoff = 0.01;
 		saoPass.renderToScreen = false;
 	}
 
